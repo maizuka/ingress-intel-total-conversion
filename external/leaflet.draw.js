@@ -17,51 +17,51 @@ L.drawLocal = {
 	draw: {
 		toolbar: {
 			actions: {
-				title: 'Cancel drawing',
-				text: 'Cancel'
+				title: '描画を取り消します',
+				text: 'キャンセル'
 			},
 			buttons: {
-				polyline: 'Draw a polyline',
-				polygon: 'Draw a polygon',
-				rectangle: 'Draw a rectangle',
-				circle: 'Draw a circle',
-				marker: 'Draw a marker'
+				polyline: '直線を描きます',
+				polygon: 'ポリゴンを描きます',
+				rectangle: '矩形を描きます',
+				circle: '円を描きます',
+				marker: 'マーカーを設置します'
 			}
 		},
 		handlers: {
 			circle: {
 				tooltip: {
-					start: 'Click and drag to draw circle.'
+					start: 'クリック/ドラッグで円を描きます'
 				}
 			},
 			marker: {
 				tooltip: {
-					start: 'Click map to place marker.'
+					start: 'クリックしてマーカーを設置します'
 				}
 			},
 			polygon: {
 				tooltip: {
-					start: 'Click to start drawing shape.',
-					cont: 'Click to continue drawing shape.',
-					end: 'Click first point to close this shape.'
+					start: 'クリックして図形を描き始めます',
+					cont: 'クリックして図形を確定します',
+					end: '最初のポイントをクリックして図形を閉じます'
 				}
 			},
 			polyline: {
-				error: '<strong>Error:</strong> shape edges cannot cross!',
+				error: '<strong>エラー:</strong> 辺を交差させることはできません',
 				tooltip: {
-					start: 'Click to start drawing line.',
-					cont: 'Click to continue drawing line.',
-					end: 'Click last point to finish line.'
+					start: 'クリックして直線を描き始めます',
+					cont: 'クリックして直線を確定します',
+					end: '終端をクリックし完了します'
 				}
 			},
 			rectangle: {
 				tooltip: {
-					start: 'Click and drag to draw rectangle.'
+					start: 'クリック/ドラッグして矩形を描きます'
 				}
 			},
 			simpleshape: {
 				tooltip: {
-					end: 'Release mouse to finish drawing.'
+					end: 'リリースして描画を完了します'
 				}
 			}
 		}
@@ -70,29 +70,29 @@ L.drawLocal = {
 		toolbar: {
 			actions: {
 				save: {
-					title: 'Save changes.',
-					text: 'Save'
+					title: '変更を保存します',
+					text: '保存'
 				},
 				cancel: {
-					title: 'Cancel editing, discards all changes.',
-					text: 'Cancel'
+					title: '編集をキャンセルし、変更を破棄します',
+					text: 'キャンセル'
 				}
 			},
 			buttons: {
-				edit: 'Edit layers',
-				remove: 'Delete layers'
+				edit: 'レイヤーを編集します',
+				remove: 'レイヤーを削除します'
 			}
 		},
 		handlers: {
 			edit: {
 				tooltip: {
-					text: 'Drag handles, or marker to edit feature.',
-					subtext: 'Click cancel to undo changes.'
+					text: 'ハンドルやマーカーをドラッグし編集します',
+					subtext: 'キャンセルをすると変更を取り消します'
 				}
 			},
 			remove: {
 				tooltip: {
-					text: 'Click on a feature to remove'
+					text: 'クリックして削除します'
 				}
 			}
 		}
@@ -848,7 +848,7 @@ L.Draw.Circle = L.Draw.SimpleShape.extend({
 
 			this._tooltip.updateContent({
 				text: this._endLabelText,
-				subtext: 'Radius: ' + L.GeometryUtil.readableDistance(radius, this.options.metric)
+				subtext: '半径: ' + L.GeometryUtil.readableDistance(radius, this.options.metric)
 			});
 		}
 	}

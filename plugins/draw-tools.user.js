@@ -331,21 +331,21 @@ window.plugin.drawTools.manualOpt = function() {
              //TODO: add line style choosers: thickness, maybe dash styles?
              '</div>' +
              '<div class="drawtoolsSetbox">' +
-             '<a onclick="window.plugin.drawTools.optCopy();" tabindex="0">Copy Drawn Items</a>' +
-             '<a onclick="window.plugin.drawTools.optPaste();return false;" tabindex="0">Paste Drawn Items</a>' +
+             '<a onclick="window.plugin.drawTools.optCopy();" tabindex="0">アイテムのコピー</a>' +
+             '<a onclick="window.plugin.drawTools.optPaste();return false;" tabindex="0">アイテムの貼り付け</a>' +
              (window.requestFile !== undefined ?
-               '<a onclick="window.plugin.drawTools.optImport();return false;" tabindex="0">Import Drawn Items</a>' : '') +
+               '<a onclick="window.plugin.drawTools.optImport();return false;" tabindex="0">アイテムをインポート</a>' : '') +
              ((typeof android !== 'undefined' && android && android.saveFile) ?
-               '<a onclick="window.plugin.drawTools.optExport();return false;" tabindex="0">Export Drawn Items</a>' : '') +
-             '<a onclick="window.plugin.drawTools.optReset();return false;" tabindex="0">Reset Drawn Items</a>' +
-             '<a onclick="window.plugin.drawTools.snapToPortals();return false;" tabindex="0">Snap to portals</a>' +
+               '<a onclick="window.plugin.drawTools.optExport();return false;" tabindex="0">アイテムをエクスポート</a>' : '') +
+             '<a onclick="window.plugin.drawTools.optReset();return false;" tabindex="0">アイテムをリセット</a>' +
+             '<a onclick="window.plugin.drawTools.snapToPortals();return false;" tabindex="0">ポータルにスナップ</a>' +
              '</div>';
 
   dialog({
     html: html,
     id: 'plugin-drawtools-options',
     dialogClass: 'ui-dialog-drawtoolsSet',
-    title: 'Draw Tools Options'
+    title: 'ドローツールオプション'
   });
 
   // need to initialise the 'spectrum' colour picker
@@ -411,9 +411,9 @@ window.plugin.drawTools.optCopy = function() {
     if (stockWarnings.noMarker) stockWarnTexts.push('Warning: Markers cannot be exported to stock intel');
     if (stockWarnings.unknown) stockWarnTexts.push('Warning: UNKNOWN ITEM TYPE');
 
-    var html = '<p><a onclick="$(\'.ui-dialog-drawtoolsSet-copy textarea\').select();">Select all</a> and press CTRL+C to copy it.</p>' +
+    var html = '<p><a onclick="$(\'.ui-dialog-drawtoolsSet-copy textarea\').select();">すべて選択</a>し、[Ctrl+C]を押してコピーします。 </p>' +
                '<textarea readonly onclick="$(\'.ui-dialog-drawtoolsSet-copy textarea\').select();">'+localStorage['plugin-draw-tools-layer']+'</textarea>' +
-               '<p>or, export as a link for the standard intel map (for non IITC users)</p>' +
+               '<p>または、標準Intel向けのリンクにエクスポートします。(IITC非使用者向け)</p>' +
                '<input onclick="event.target.select();" type="text" size="90" value="'+stockUrl+'"/>';
     if (stockWarnTexts.length>0) {
       html += '<ul><li>'+stockWarnTexts.join('</li><li>')+'</li></ul>';
@@ -435,7 +435,7 @@ window.plugin.drawTools.optExport = function() {
 };
 
 window.plugin.drawTools.optPaste = function() {
-  var promptAction = prompt('Press CTRL+V to paste (draw-tools data or stock intel URL).', '');
+  var promptAction = prompt('[Ctrl+V]を押して貼り付けます。 (ドローツールデータ または 標準Intel URL).', '');
   if(promptAction !== null && promptAction !== '') {
     try {
       // first see if it looks like a URL-format stock intel link, and if so, try and parse out any stock drawn items
@@ -472,7 +472,7 @@ window.plugin.drawTools.optPaste = function() {
         runHooks('pluginDrawTools', {event: 'import'});
 
         console.log('DRAWTOOLS: reset and imported drawn items from stock URL');
-        window.plugin.drawTools.optAlert('Import Successful.');
+        window.plugin.drawTools.optAlert('インポートに成功しました。');
 
 
       } else {
@@ -480,14 +480,14 @@ window.plugin.drawTools.optPaste = function() {
         window.plugin.drawTools.drawnItems.clearLayers();
         window.plugin.drawTools.import(data);
         console.log('DRAWTOOLS: reset and imported drawn items');
-        window.plugin.drawTools.optAlert('Import Successful.');
+        window.plugin.drawTools.optAlert('インポートに成功しました。');
       }
 
       // to write back the data to localStorage
       window.plugin.drawTools.save();
     } catch(e) {
       console.warn('DRAWTOOLS: failed to import data: '+e);
-      window.plugin.drawTools.optAlert('<span style="color: #f88">Import failed</span>');
+      window.plugin.drawTools.optAlert('<span style="color: #f88">インポート失敗</span>');
     }
   }
 };
@@ -500,25 +500,25 @@ window.plugin.drawTools.optImport = function() {
       window.plugin.drawTools.drawnItems.clearLayers();
       window.plugin.drawTools.import(data);
       console.log('DRAWTOOLS: reset and imported drawn tiems');
-      window.plugin.drawTools.optAlert('Import Successful.');
+      window.plugin.drawTools.optAlert('インポートに成功しました。');
 
       // to write back the data to localStorage
       window.plugin.drawTools.save();
     } catch(e) {
       console.warn('DRAWTOOLS: failed to import data: '+e);
-      window.plugin.drawTools.optAlert('<span style="color: #f88">Import failed</span>');
+      window.plugin.drawTools.optAlert('<span style="color: #f88">インポート失敗</span>');
     }
   });
 };
 
 window.plugin.drawTools.optReset = function() {
-  var promptAction = confirm('All drawn items will be deleted. Are you sure?', '');
+  var promptAction = confirm('すべてのアイテムを削除しますか？', '');
   if(promptAction) {
     delete localStorage['plugin-draw-tools-layer'];
     window.plugin.drawTools.drawnItems.clearLayers();
     window.plugin.drawTools.load();
     console.log('DRAWTOOLS: reset all drawn items');
-    window.plugin.drawTools.optAlert('Reset Successful. ');
+    window.plugin.drawTools.optAlert('リセットに成功しました。 ');
     runHooks('pluginDrawTools', {event: 'clear'});
   }
 };
@@ -526,13 +526,13 @@ window.plugin.drawTools.optReset = function() {
 window.plugin.drawTools.snapToPortals = function() {
   var dataParams = getMapZoomTileParameters(getDataZoomForMapZoom(map.getZoom()));
   if (dataParams.level > 0) {
-    if (!confirm('Not all portals are visible on the map. Snap to portals may move valid points to the wrong place. Continue?')) {
+    if (!confirm('マップにすべてのポータルが表示されていません。この動作で誤ったポイントに移動させる可能性があります。 続行しますか？')) {
       return;
     }
   }
 
   if (mapDataRequest.status.short != 'done') {
-    if (!confirm('Map data has not completely loaded, so some portals may be missing. Do you want to continue?')) {
+    if (!confirm('マップデータを完全に読み込めませんでした、そのためいくつかのポータルが欠けるかもしれません。 続行しますか？')) {
       return;
     }
   }
@@ -550,7 +550,7 @@ window.plugin.drawTools.snapToPortals = function() {
   });
 
   if (Object.keys(visiblePortals).length === 0) {
-    alert('Error: No portals visible in this view - nothing to snap points to!');
+    alert('エラー: 表示範囲にポータルがありません - ポイントをスナップできませんでした');
     return;
   }
 
@@ -611,7 +611,7 @@ window.plugin.drawTools.snapToPortals = function() {
     runHooks('pluginDrawTools',{event:'layersSnappedToPortals'}); //or should we send 'layersEdited'? as that's effectively what's happened...
   }
 
-  alert('Tested '+testCount+' points, and moved '+changedCount+' onto portal coordinates');
+  alert('認識 '+testCount+' 個,  移動 '+changedCount+' 個');
 
   window.plugin.drawTools.save();
 };
@@ -677,7 +677,7 @@ window.plugin.drawTools.boot = function() {
     runHooks('pluginDrawTools',{event:'layersEdited'});
   });
   //add options menu
-  $('#toolbox').append('<a onclick="window.plugin.drawTools.manualOpt();return false;" accesskey="x" title="[x]">DrawTools Opt</a>');
+  $('#toolbox').append('<a onclick="window.plugin.drawTools.manualOpt();return false;" accesskey="x" title="[x]">ドローツールオプション</a>');
 
   $('head').append('<style>' +
     '.drawtoolsSetbox > a { display:block; color:#ffce00; border:1px solid #ffce00; padding:3px 0; margin:10px auto; width:80%; text-align:center; background:rgba(8,48,78,.9); }'+
