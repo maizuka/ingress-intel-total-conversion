@@ -68,7 +68,7 @@ window.MapDataRequest = function() {
   this.FETCH_TO_REFRESH_FACTOR = 2;  //minumum refresh time is based on the time to complete a data fetch, times this value
 
   // ensure we have some initial map status
-  this.setStatus ('startup', undefined, -1);
+  this.setStatus ('スタートアップ', undefined, -1);
 
   // add a portalDetailLoaded hook, so we can use the exteneed details to update portals on the map
   var _this = this;
@@ -92,7 +92,7 @@ window.MapDataRequest.prototype.start = function() {
 
   // then set a timeout to start the first refresh
   this.refreshOnTimeout (this.STARTUP_REFRESH);
-  this.setStatus ('refreshing', undefined, -1);
+  this.setStatus ('リフレッシュ中', undefined, -1);
 
   if (this.cache)
     this.cache.startExpireInterval (15);
@@ -102,7 +102,7 @@ window.MapDataRequest.prototype.start = function() {
 window.MapDataRequest.prototype.mapMoveStart = function() {
   console.log('refresh map movestart');
 
-  this.setStatus('paused');
+  this.setStatus('待機中');
   this.clearTimeout();
   this.pauseRenderQueue(true);
 };
@@ -120,7 +120,7 @@ window.MapDataRequest.prototype.mapMoveEnd = function() {
       var remainingTime = (this.timerExpectedTimeoutTime - new Date().getTime())/1000;
 
       if (remainingTime > this.MOVE_REFRESH) {
-        this.setStatus('done','Map moved, but no data updates needed');
+        this.setStatus('完了','マップが移動しましたが更新の必要はありませんでした。');
         this.refreshOnTimeout(remainingTime);
         this.pauseRenderQueue(false);
         return;
@@ -128,7 +128,7 @@ window.MapDataRequest.prototype.mapMoveEnd = function() {
     }
   }
 
-  this.setStatus('refreshing', undefined, -1);
+  this.setStatus('リフレッシュ中', undefined, -1);
   this.refreshOnTimeout(this.MOVE_REFRESH);
 };
 
@@ -138,7 +138,7 @@ window.MapDataRequest.prototype.idleResume = function() {
   if (this.idle) {
     console.log('refresh map idle resume');
     this.idle = false;
-    this.setStatus('idle restart', undefined, -1);
+    this.setStatus('アイドル解除', undefined, -1);
     this.refreshOnTimeout(this.IDLE_RESUME_REFRESH);
   }
 };
@@ -184,7 +184,7 @@ window.MapDataRequest.prototype.refresh = function() {
   // if we're idle, don't refresh
   if (window.isIdle()) {
     console.log('suspending map refresh - is idle');
-    this.setStatus ('idle');
+    this.setStatus ('アイドル');
     this.idle = true;
     return;
   }
@@ -324,7 +324,7 @@ window.MapDataRequest.prototype.refresh = function() {
 
 
 
-  this.setStatus ('loading', undefined, -1);
+  this.setStatus ('読み込み中', undefined, -1);
 
   // technically a request hasn't actually finished - however, displayed portal data has been refreshed
   // so as far as plugins are concerned, it should be treated as a finished request
@@ -407,14 +407,14 @@ window.MapDataRequest.prototype.processRequestQueue = function(isFirstPass) {
 
   // update status
   var pendingTileCount = this.requestedTileCount - (this.successTileCount+this.failedTileCount+this.staleTileCount);
-  var longText = 'Tiles: ' + this.cachedTileCount + ' cached, ' +
-                 this.successTileCount + ' loaded, ' +
-                 (this.staleTileCount ? this.staleTileCount + ' stale, ' : '') +
-                 (this.failedTileCount ? this.failedTileCount + ' failed, ' : '') +
-                 pendingTileCount + ' remaining';
+  var longText = 'タイル: ' + 'キャッシュ' + this.cachedTileCount + ' 個, ' +
+                 '完了' + this.successTileCount + ' 個, ' +
+                 (this.staleTileCount ? '期限切れ' + this.staleTileCount + ' 個, ' : '') +
+                 (this.failedTileCount ? '失敗' + this.failedTileCount + ' 個, ' : '') +
+                 '残り' + pendingTileCount + ' 個';
 
   progress = this.requestedTileCount > 0 ? (this.requestedTileCount-pendingTileCount) / this.requestedTileCount : undefined;
-  this.setStatus ('loading', longText, progress);
+  this.setStatus ('読み込み中', longText, progress);
 };
 
 
@@ -730,17 +730,17 @@ window.MapDataRequest.prototype.processRenderQueue = function() {
 
     window.runHooks ('mapDataRefreshEnd', {});
 
-    var longStatus = 'Tiles: ' + this.cachedTileCount + ' cached, ' +
-                 this.successTileCount + ' loaded, ' +
-                 (this.staleTileCount ? this.staleTileCount + ' stale, ' : '') +
-                 (this.failedTileCount ? this.failedTileCount + ' failed, ' : '') +
-                 'in ' + duration + ' seconds';
+    var longStatus = 'タイル: '+ 'キャッシュ ' + this.cachedTileCount + ' 個, ' +
+                '完了 '  + this.successTileCount + ' 個, ' +
+                 (this.staleTileCount ? '期限切れ' + this.staleTileCount + ' 個, ' : '') +
+                 (this.failedTileCount ? '失敗' + this.failedTileCount + ' 個, ' : '') +
+                 ' ' + duration + ' 秒';
 
     // refresh timer based on time to run this pass, with a minimum of REFRESH seconds
     var minRefresh = map.getZoom()>12 ? this.REFRESH_CLOSE : this.REFRESH_FAR;
     var refreshTimer = Math.max(minRefresh, duration*this.FETCH_TO_REFRESH_FACTOR);
     this.refreshOnTimeout(refreshTimer);
-    this.setStatus (this.failedTileCount ? 'errors' : this.staleTileCount ? 'out of date' : 'done', longStatus);
+    this.setStatus (this.failedTileCount ? '個 エラー' : this.staleTileCount ? '個 期限切れ' : '完了', longStatus);
 
   }
 

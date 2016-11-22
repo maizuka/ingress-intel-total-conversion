@@ -17,7 +17,7 @@ window.renderPortalDetails = function(guid) {
     $('#portaldetails').html('');
     if(isSmartphone()) {
       $('.fullimg').remove();
-      $('#mobileinfo').html('<div style="text-align: center"><b>tap here for info screen</b></div>');
+      $('#mobileinfo').html('<div style="text-align: center"><b>ここをタップして詳細へ</b></div>');
     }
     return;
   }
@@ -37,7 +37,7 @@ window.renderPortalDetails = function(guid) {
   var resoDetails = details ? getResonatorDetails(details) : '';
 
 //TODO? other status details...
-  var statusDetails = details ? '' : '<div id="portalStatus">Loading details...</div>';
+  var statusDetails = details ? '' : '<div id="portalStatus">詳細を読込み中...</div>';
 
 
   var img = fixPortalImageUrl(details ? details.image : data.image);
@@ -46,25 +46,25 @@ window.renderPortalDetails = function(guid) {
   var lat = data.latE6/1E6;
   var lng = data.lngE6/1E6;
 
-  var imgTitle = title+'\n\nClick to show full image.';
+  var imgTitle = title+'\n\nクリックして大きく表示。';
 
 
   // portal level. start with basic data - then extend with fractional info in tooltip if available
   var levelInt = (teamStringToId(data.team) == TEAM_NONE) ? 0 : data.level;
   var levelDetails = levelInt;
   if (details) {
-    levelDetails = getPortalLevel(details);
-    if(levelDetails != 8) {
-      if(levelDetails==Math.ceil(levelDetails))
-        levelDetails += "\n8";
+    var levelDecimal = getPortalLevel(details);
+    if(levelDecimal !== 8) {
+      levelDetails += "\n次のレベルまでレゾネーターレベル ";
+      if(levelDecimal === Math.ceil(levelDecimal))
+        levelDetails += "+8";
       else
-        levelDetails += "\n" + (Math.ceil(levelDetails) - levelDetails)*8;
-      levelDetails += " resonator level(s) needed for next portal level";
+        levelDetails += "+" + (Math.ceil(levelDecimal) - levelDecimal)*8;
     } else {
-      levelDetails += "\nfully upgraded";
+      levelDetails += "\n最大レベル";
     }
   }
-  levelDetails = "Level " + levelDetails;
+  levelDetails = "レベル " + levelDetails;
 
 
   var linkDetails = [];
@@ -76,16 +76,16 @@ window.renderPortalDetails = function(guid) {
     // android devices. one share link option - and the android app provides an interface to share the URL,
     // share as a geo: intent (navigation via google maps), etc
 
-    var shareLink = $('<div>').html( $('<a>').attr({onclick:posOnClick}).text('Share portal') ).html();
+    var shareLink = $('<div>').html( $('<a>').attr({onclick:posOnClick}).text('ポータルを共有') ).html();
     linkDetails.push('<aside>'+shareLink+'</aside>');
 
   } else {
     // non-android - a permalink for the portal
-    var permaHtml = $('<div>').html( $('<a>').attr({href:permalinkUrl, title:'Create a URL link to this portal'}).text('Portal link') ).html();
+    var permaHtml = $('<div>').html( $('<a>').attr({href:permalinkUrl, title:'このポータルへのURLリンク (右クリックでコピー)'}).text('ポータルアドレス') ).html();
     linkDetails.push ( '<aside>'+permaHtml+'</aside>' );
 
     // and a map link popup dialog
-    var mapHtml = $('<div>').html( $('<a>').attr({onclick:posOnClick, title:'Link to alternative maps (Google, etc)'}).text('Map links') ).html();
+    var mapHtml = $('<div>').html( $('<a>').attr({onclick:posOnClick, title:'代替マップへのリンクを表示 (Google, etc)'}).text('マップリンク') ).html();
     linkDetails.push('<aside>'+mapHtml+'</aside>');
 
   }
@@ -98,7 +98,7 @@ window.renderPortalDetails = function(guid) {
 
       $('<span>').attr({
         class: 'close',
-        title: 'Close [w]',
+        title: '閉じる [w]',
         onclick:'renderPortalDetails(null); if(isSmartphone()) show("map");',
         accesskey: 'w'
       }).text('X'),
@@ -139,21 +139,20 @@ window.getPortalMiscDetails = function(guid,d) {
     var linkCount = linkInfo.in.length + linkInfo.out.length;
     var links = {incoming: linkInfo.in.length, outgoing: linkInfo.out.length};
 
-    var title = 'at most ' + maxOutgoing + ' outgoing links\n' +
-                links.outgoing + ' links out\n' +
-                links.incoming + ' links in\n' +
-                '(' + (links.outgoing+links.incoming) + ' total)';
-    var linksText = ['links', links.outgoing+' out / '+links.incoming+' in', title];
+    var title = 'OUT:\t' + links.outgoing + ' 本 (上限 ' + maxOutgoing + ' 本)\n' +
+                'IN:\t' + links.incoming + ' 本\n' +
+                '合計: ' + (links.outgoing+links.incoming) + ' 本';
+    var linksText = ['リンク', 'OUT '+links.outgoing+' / '+'IN '+links.incoming, title];
 
     var player = d.owner ?
         '<span class="nickname">' + d.owner + '</span>' :
         '-';
-    var playerText = ['owner', player];
+    var playerText = ['オーナー', player, d.owner];
 
 
     var fieldCount = getPortalFieldsCount(guid);
 
-    var fieldsText = ['fields', fieldCount];
+    var fieldsText = ['CF', fieldCount, '形成するフィールドの数'];
 
     var apGainText = getAttackApGainText(d,fieldCount,linkCount);
 
@@ -175,13 +174,13 @@ window.getPortalMiscDetails = function(guid,d) {
 
     if(attackValues.attack_frequency !== 0)
       randDetailsData.push([
-        '<span title="attack frequency" class="text-overflow-ellipsis">attack frequency</span>',
-        '×'+attackValues.attack_frequency]);
+        '<span title="攻撃頻度 (ターレット)" class="text-overflow-ellipsis">攻撃頻度</span>',
+        '×'+attackValues.attack_frequency, '攻撃頻度 (ターレット)']);
     if(attackValues.hit_bonus !== 0)
-      randDetailsData.push(['hit bonus', attackValues.hit_bonus+'%']);
+      randDetailsData.push(['<span title="クリティカルヒットボーナス (ターレット)" class="text-overflow-ellipsis">ヒット率</span>', '+'+attackValues.hit_bonus+'%']);
     if(attackValues.force_amplifier !== 0)
       randDetailsData.push([
-        '<span title="force amplifier" class="text-overflow-ellipsis">force amplifier</span>',
+        '<span title="攻撃力 (フォースアンプ)" class="text-overflow-ellipsis">攻撃力</span>',
         '×'+attackValues.force_amplifier]);
 
     randDetails = '<table id="randdetails">' + genFourColumnTable(randDetailsData) + '</table>';
@@ -193,12 +192,12 @@ window.getPortalMiscDetails = function(guid,d) {
     if (d.artifactBrief && d.artifactBrief.target && Object.keys(d.artifactBrief.target).length > 0) {
       var targets = Object.keys(d.artifactBrief.target);
 //currently (2015-07-10) we no longer know the team each target portal is for - so we'll just show the artifact type(s)
-       randDetails += '<div id="artifact_target">Target portal: '+targets.map(function(x) { return x.capitalize(); }).join(', ')+'</div>';
+       randDetails += '<div id="artifact_target">ターゲットポータル: '+targets.map(function(x) { return x.capitalize(); }).join(', ')+'</div>';
     }
 
     // shards - taken directly from the portal details
     if (d.artifactDetail) {
-      randDetails += '<div id="artifact_fragments">Shards: '+d.artifactDetail.displayName+' #'+d.artifactDetail.fragments.join(', ')+'</div>';
+      randDetails += '<div id="artifact_fragments">シャード: '+d.artifactDetail.displayName+' #'+d.artifactDetail.fragments.join(', ')+'</div>';
     }
 
   }

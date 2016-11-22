@@ -84,7 +84,7 @@ window.layerChooserSetDisabledStates = function() {
   var portalSelection = $('.leaflet-control-layers-overlays label');
   //it's an array - 0=unclaimed, 1=lvl 1, 2=lvl 2, ..., 8=lvl 8 - 9 relevant entries
   //mark all levels below (but not at) minlvl as disabled
-  portalSelection.slice(0, minlvl).addClass('disabled').attr('title', 'Zoom in to show those.');
+  portalSelection.slice(0, minlvl).addClass('disabled').attr('title', '拡大して表示します');
   //and all from minlvl to 8 as enabled
   portalSelection.slice(minlvl, 8+1).removeClass('disabled').attr('title', '');
 
@@ -201,7 +201,7 @@ window.setupMap = function() {
     portalsFactionLayers[i] = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
     portalsLayers[i] = L.layerGroup(portalsFactionLayers[i]);
     map.addLayer(portalsLayers[i]);
-    var t = (i === 0 ? 'Unclaimed' : 'Level ' + i) + ' Portals';
+    var t = (i === 0 ? '未キャプチャーポータル' : 'ポータルレベル ' + i);
     addLayers[t] = portalsLayers[i];
     // Store it in hiddenLayer to remove later
     if(!isLayerGroupDisplayed(t, true)) hiddenLayer.push(portalsLayers[i]);
@@ -210,16 +210,18 @@ window.setupMap = function() {
   fieldsFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
   var fieldsLayer = L.layerGroup(fieldsFactionLayers);
   map.addLayer(fieldsLayer, true);
-  addLayers.Fields = fieldsLayer;
+  var fieldsLayerName = 'コントロールフィールド';
+  addLayers[fieldsLayerName] = fieldsLayer;
   // Store it in hiddenLayer to remove later
-  if(!isLayerGroupDisplayed('Fields', true)) hiddenLayer.push(fieldsLayer);
+  if(!isLayerGroupDisplayed(fieldsLayerName, true)) hiddenLayer.push(fieldsLayer);
 
   linksFactionLayers = [L.layerGroup(), L.layerGroup(), L.layerGroup()];
   var linksLayer = L.layerGroup(linksFactionLayers);
   map.addLayer(linksLayer, true);
-  addLayers.Links = linksLayer;
+  var linksLayerName = 'リンク';
+  addLayers[linksLayerName] = linksLayer;
   // Store it in hiddenLayer to remove later
-  if(!isLayerGroupDisplayed('Links', true)) hiddenLayer.push(linksLayer);
+  if(!isLayerGroupDisplayed(linksLayerName, true)) hiddenLayer.push(linksLayer);
 
   // faction-specific layers
   // these layers don't actually contain any data. instead, every time they're added/removed from the map,
@@ -248,28 +250,30 @@ window.setupMap = function() {
   };
 
   // to avoid any favouritism, we'll put the player's own faction layer first
+  var ResName = 'レジスタンス';
+  var EnlName = 'エンライテンド';
   if (PLAYER.team == 'RESISTANCE') {
-    addLayers.Resistance = factionLayers[TEAM_RES];
-    addLayers.Enlightened = factionLayers[TEAM_ENL];
+    addLayers[ResName] = factionLayers[TEAM_RES];
+    addLayers[EnlName] = factionLayers[TEAM_ENL];
   } else {
-    addLayers.Enlightened = factionLayers[TEAM_ENL];
-    addLayers.Resistance = factionLayers[TEAM_RES];
+    addLayers[EnlName] = factionLayers[TEAM_ENL];
+    addLayers[ResName] = factionLayers[TEAM_RES];
   }
-  if (!isLayerGroupDisplayed('Resistance', true)) hiddenLayer.push (factionLayers[TEAM_RES]);
-  if (!isLayerGroupDisplayed('Enlightened', true)) hiddenLayer.push (factionLayers[TEAM_ENL]);
+  if (!isLayerGroupDisplayed(ResName, true)) hiddenLayer.push (factionLayers[TEAM_RES]);
+  if (!isLayerGroupDisplayed(EnlName, true)) hiddenLayer.push (factionLayers[TEAM_ENL]);
 
   setFactionLayersState (TEAM_NONE, true);
-  setFactionLayersState (TEAM_RES, isLayerGroupDisplayed('Resistance', true));
-  setFactionLayersState (TEAM_ENL, isLayerGroupDisplayed('Enlightened', true));
+  setFactionLayersState (TEAM_RES, isLayerGroupDisplayed(ResName, true));
+  setFactionLayersState (TEAM_ENL, isLayerGroupDisplayed(EnlName, true));
 
   // NOTE: these events are fired by the layer chooser, so won't happen until that's created and added to the map
   window.map.on('overlayadd overlayremove', function(e) {
     var displayed = (e.type == 'overlayadd');
     switch (e.name) {
-      case 'Resistance':
+      case ResName:
         setFactionLayersState (TEAM_RES, displayed);
         break;
-      case 'Enlightened':
+      case EnlName:
         setFactionLayersState (TEAM_ENL, displayed);
         break;
     }
@@ -285,8 +289,8 @@ window.setupMap = function() {
 
     // as users often become confused if they accidentally switch a standard layer off, display a warning in this case
     $('#portaldetails').html('<div class="layer_off_warning">' +
-                            '<p><b>Warning</b>: some of the standard layers are turned off. Some portals/links/fields will not be visible.</p>' +
-                            '<a id="enable_standard_layers">Enable standard layers</a>' +
+                            '<p><b>警告</b>: いくつかの標準レイヤーが非表示にされています。一部のポータル/リンク/フィールドが表示されない可能性があります。</p>' +
+                            '<a id="enable_standard_layers">標準レイヤーを有効化する</a>' +
                             '</div>');
 
     $('#enable_standard_layers').on('click', function() {
@@ -420,18 +424,19 @@ window.setupPlayerStat = function() {
   var cls = PLAYER.team === 'RESISTANCE' ? 'res' : 'enl';
 
 
-  var t = 'Level:\t' + level + '\n' +
+  var t = 'レベル:\t' + level + '\n' +
         'XM:\t' + PLAYER.energy + ' / ' + xmMax + '\n' +
         'AP:\t' + digits(ap) + '\n' +
-        (nextLvlAp > 0 ? 'level up in:\t' + lvlUpAp + ' AP' : 'Maximul level reached(!)') +
-        '\n\Invites:\t'+PLAYER.available_invites +
-        '\n\nNote: your player stats can only be updated by a full reload (F5)';
+        'レベルアップまで:\t' + (nextLvlAp > 0 ? lvlUpAp : 0) + ' AP' +
+        '\n\n招待状:\t' + PLAYER.available_invites + ' 通' +
+        '\n\n(リロード時の情報)';
 
+  $('#playerstat').attr('title', t);
   $('#playerstat').html('' +
-    '<h2 title="'+t+'">'+level+'&nbsp;' +
+    '<h2>'+level+'&nbsp;' +
     '<div id="name">' +
     '<span class="'+cls+'">'+PLAYER.nickname+'</span>' +
-    '<a href="/_ah/logout?continue=https://www.google.com/accounts/Logout%3Fcontinue%3Dhttps://appengine.google.com/_ah/logout%253Fcontinue%253Dhttps://www.ingress.com/intel%26service%3Dah" id="signout">sign out</a>' +
+    '<a href="/_ah/logout?continue=https://www.google.com/accounts/Logout%3Fcontinue%3Dhttps://appengine.google.com/_ah/logout%253Fcontinue%253Dhttps://www.ingress.com/intel%26service%3Dah" id="signout">ログアウト</a>' +
     '</div>' +
     '<div id="stats">' +
     '<sup>XM: '+xmRatio+'%</sup>' +
@@ -638,11 +643,11 @@ function boot() {
     // if any entries remain in the list, report this to the user and don't boot ANY plugins
     // (why not any? it's tricky to know which of the plugin boot entries were safe/unsafe)
     if (Object.keys(badPlugins).length > 0) {
-      var warning = 'One or more known unsafe plugins were detected. For your safety, IITC has disabled all plugins.<ul>';
+      var warning = '安全でないプラグインを検出しました。 安全のためIITCはすべてのプラグインを停止しました。<ul>';
       $.each(badPlugins,function(name,desc) {
         warning += '<li><b>'+name+'</b>: '+desc+'</li>';
       });
-      warning += '</ul><p>Please uninstall the problem plugins and reload the page. See this <a href="http://iitc.jonatkins.com/?page=faq#uninstall">FAQ entry</a> for help.</p><p><i>Note: It is tricky for IITC to safely disable just problem plugins</i></p>';
+      warning += '</ul><p>問題のあるプラグインを停止しリロードしてください。<a href="http://iitc.jonatkins.com/?page=faq#uninstall">FAQ entry</a>(英語) からヘルプを参照できます。</p><p><i>ヒント: IITCを安定的に使うために問題のあるプラグインを無効化しましょう。</i></p>';
 
       dialog({
         title: 'Plugin Warning',

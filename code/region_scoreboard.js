@@ -8,13 +8,13 @@ window.regionScoreboard = function() {
   var latE6 = Math.round(latLng.lat*1E6);
   var lngE6 = Math.round(latLng.lng*1E6);
 
-  var dlg = dialog({title:'Region scores',html:'Loading regional scores...',width:450,minHeight:320});
+  var dlg = dialog({title:'地域スコア',html:'地域スコアを読み込んでいます...',width:450,minHeight:320});
 
   window.postAjax('getRegionScoreDetails', {latE6:latE6,lngE6:lngE6}, function(res){regionScoreboardSuccess(res,dlg);}, function(){regionScoreboardFailure(dlg);});
 };
 
 function regionScoreboardFailure(dlg) {
-  dlg.html('Failed to load region scores - try again');
+  dlg.html('地域スコアの読み込みに失敗しました - 再試行してください');
 }
 
 
@@ -118,7 +118,7 @@ function regionScoreboardScoreHistoryChart(result, logscale) {
             '<rect x="0" y="0" width="400" height="130" stroke="#FFCE00" fill="#08304E" />' +
             paths +
             otherSvg.join('') +
-            '<foreignObject height="18" width="45" y="111" x="0" class="node"><label title="Logarithmic scale">' +
+            '<foreignObject height="18" width="45" y="111" x="0" class="node"><label title="対数表示">' +
             '<input type="checkbox" class="logscale" style="height:auto;padding:0;vertical-align:middle"'+(logscale?' checked':'')+'/>' +
             'log</label></foreignObject>' +
             '</svg></div>';
@@ -128,7 +128,7 @@ function regionScoreboardScoreHistoryChart(result, logscale) {
 
 function regionScoreboardScoreHistoryTable(result) {
   var history = result.scoreHistory;
-  var table = '<table class="checkpoint_table"><thead><tr><th>Checkpoint</th><th>Enlightened</th><th>Resistance</th></tr></thead>';
+  var table = '<table class="checkpoint_table"><thead><tr><th>チェックポイント</th><th>ENL</th><th>RES</th></tr></thead>';
 
   for(var i=0; i<history.length; i++) {
     table += '<tr><td>' + history[i][0] + '</td><td>' + digits(history[i][1]) + '</td><td>' + digits(history[i][2]) + '</td></tr>';
@@ -143,13 +143,13 @@ function regionScoreboardSuccess(data,dlg,logscale) {
     return regionScoreboardFailure(dlg);
   }
 
-  var agentTable = '<table><tr><th>#</th><th>Agent</th></tr>';
+  var agentTable = '<table><tr><th>#</th><th>エージェント</th></tr>';
   for (var i=0; i<data.result.topAgents.length; i++) {
     var agent = data.result.topAgents[i];
     agentTable += '<tr><td>'+(i+1)+'</td><td class="nickname '+(agent.team=='RESISTANCE'?'res':'enl')+'">'+agent.nick+'</td></tr>';
   }
   if (data.result.topAgents.length===0) {
-    agentTable += '<tr><td colspan="2"><i>no top agents</i></td></tr>';
+    agentTable += '<tr><td colspan="2"><i>このセルにはいません</i></td></tr>';
   }
   agentTable += '</table>';
 
@@ -169,12 +169,12 @@ function regionScoreboardSuccess(data,dlg,logscale) {
 
   // we need some divs to make the accordion work properly
   dlg.html('<div class="cellscore">' +
-         '<b>Region scores for '+data.result.regionName+'</b>' +
+         '<b>'+data.result.regionName+' の地域スコア</b>' +
          '<div><table>'+teamRow[first]+teamRow[1-first]+'</table>' +
          regionScoreboardScoreHistoryChart(data.result, logscale)+'</div>' +
-         '<b>Checkpoint overview</b>' +
+         '<b>これまでのスコア</b>' +
          '<div>'+regionScoreboardScoreHistoryTable(data.result)+'</div>' +
-         '<b>Top agents</b>' +
+         '<b>トップエージェント</b>' +
          '<div>'+agentTable+'</div>' +
          '</div>');
 

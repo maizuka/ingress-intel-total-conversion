@@ -25,9 +25,9 @@ window.artifact.setup = function() {
   setTimeout (artifact.requestData, 1);
 
   artifact._layer = new L.LayerGroup();
-  addLayerGroup ('Artifacts', artifact._layer, true);
+  addLayerGroup ('シャード', artifact._layer, true);
 
-  $('#toolbox').append(' <a onclick="window.artifact.showArtifactList()" title="Show artifact portal list">Artifacts</a>');
+  $('#toolbox').append(' <a onclick="window.artifact.showArtifactList()" title="シャードポータルの一覧表示">シャード</a>');
 
 };
 
@@ -219,7 +219,7 @@ window.artifact.showArtifactList = function() {
   var html = '';
 
   if (Object.keys(artifact.artifactTypes).length === 0) {
-    html += '<i>No artifacts at this time</i>';
+    html += '<i>現在シャードポータルはありません</i>';
   }
 
   var first = true;
@@ -233,7 +233,7 @@ window.artifact.showArtifactList = function() {
     html += '<div><b>'+name+'</b></div>';
 
     html += '<table class="artifact artifact-'+type+'">';
-    html += '<tr><th>Portal</th><th>Details</th></tr>';
+    html += '<tr><th>ポータル</th><th>詳細</th></tr>';
 
     var tableRows = [];
 
@@ -248,7 +248,7 @@ window.artifact.showArtifactList = function() {
 
         if (data[type].target !== undefined) {
           if (data[type].target == TEAM_NONE) {
-            row += '<span class="target">Target Portal</span> ';
+            row += '<span class="target">ターゲットポータル</span> ';
           } else {
             row += '<span class="target '+TEAM_TO_CSS[data[type].target]+'">'+(data[type].target==TEAM_RES?'Resistance':'Enlightened')+' target</span> ';
           }
@@ -274,7 +274,7 @@ window.artifact.showArtifactList = function() {
 
     // check for no rows, and add a note to the table instead
     if (tableRows.length === 0) {
-      html += '<tr><td colspan="2"><i>No portals at this time</i></td></tr>';
+      html += '<tr><td colspan="2"><i>現在ポータルはありません</i></td></tr>';
     }
 
     // sort the rows
@@ -293,14 +293,14 @@ window.artifact.showArtifactList = function() {
 
 
   html += "<hr />" +
-        "<p>In Summer 2015, Niantic changed the data format for artifact portals. We no longer know:</p>" +
-        "<ul><li>Which team each target portal is for - only that it is a target</li>" +
-        "<li>Which shards are at each portal, just that it has one or more shards</li></ul>" +
-        "<p>You can select a portal and the detailed data contains the list of shard numbers, but there's still no" +
-        " more information on targets.</p>";
+        "<p>2015年夏にNianticがシャードポータルについてのデータ形式を変更したため、以下の情報は取得できません。</p>" +
+        "<ul><li>ターゲットポータルの陣営</li>" +
+        "<li>ポータルに存在するシャードがどのシャードで、また何個あるのか</li></ul>" +
+        "<p>ターゲットポータルを選択すると、シャード番号の一覧を見ることはできますが、" +
+        "そのほかの情報は得られません。</p>";
 
   dialog({
-    title: 'Artifacts',
+    title: 'シャード',
     html: html,
     width: 400,
     position: {my: 'right center', at: 'center-60 center', of: window, collision: 'fit'}

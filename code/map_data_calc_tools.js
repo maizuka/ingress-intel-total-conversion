@@ -41,10 +41,10 @@ window.setupDataTileParams = function() {
 
   } else {
     dialog({
-      title: 'IITC Warning',
-      html: "<p>IITC failed to detect the ZOOM_TO_LEVEL and/or TILES_PER_EDGE settings from the stock intel site.</p>" +
-            "<p>IITC is now using fallback default values. However, if detection has failed it's likely the values have changed." +
-            " IITC may not load the map if these default values are wrong.</p>",
+      title: 'IITC 警告',
+      html: "<p>IITCは標準IntelからZOOM_TO_LEVELやTILES_PER_EDGEの初期値を検出できませんでした。</p>" +
+          "<p>暫定値を使用しますが、初期値と異なる可能性があります。" +
+          " この設定値が正しくないと、マップを正常に表示できないことがあります。</p>",
     });
 
     window.TILE_PARAMS.ZOOM_TO_LEVEL = DEFAULT_ZOOM_TO_LEVEL;

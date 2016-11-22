@@ -102,9 +102,9 @@ window.extractFromStock = function() {
 
   if (niantic_params.CURRENT_VERSION === undefined) {
     dialog({
-      title: 'IITC Broken',
-      html: '<p>IITC failed to extract the required parameters from the intel site</p>' +
-           '<p>This can happen after Niantic update the standard intel site. A fix will be needed from the IITC developers.</p>',
+      title: 'IITCは使用できません',
+      html: '<p>標準Intelから必要なパラメータの取り出しに失敗しました。</p>' +
+          '<p>これはNianticが標準Intelを更新したことに起因します。解決にはIITC開発者による修正が必要です。</p>',
     });
 
     console.log('Discovered parameters');

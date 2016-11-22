@@ -30,7 +30,7 @@ window.handleRedeemResponse = function(data, textStatus, jqXHR) {
   if(data.error) {
     console.error('Error redeeming passcode "'+passcode+'": ' + data.error);
     dialog({
-      title: 'Error: ' + passcode,
+      title: 'エラー: ' + passcode,
       html: '<strong>' + data.error + '</strong>'
     });
     return;
@@ -38,8 +38,8 @@ window.handleRedeemResponse = function(data, textStatus, jqXHR) {
   if(!data.rewards) {
     console.error('Error redeeming passcode "'+passcode+'": ', data);
     dialog({
-      title: 'Error: ' + passcode,
-      html: '<strong>An unexpected error occured</strong>'
+      title: 'エラー: ' + passcode,
+      html: '<strong>予期しないエラーが発生しました。</strong>'
     });
     return;
   }
@@ -76,14 +76,14 @@ window.handleRedeemResponse = function(data, textStatus, jqXHR) {
 
   // Display it
   dialog({
-    title: 'Passcode: ' + passcode,
+    title: 'パスコード: ' + passcode,
     html: html,
     buttons: buttons
   });
 };
 
 window.formatPasscodeLong = function(data) {
-  var html = '<p><strong>Passcode confirmed. Acquired items:</strong></p><ul class="redeemReward">';
+  var html = '<p><strong>パスコードを認証しました。以下のアイテムを獲得:</strong></p><ul class="redeemReward">';
 
   if(data.other) {
     data.other.forEach(function(item) {
@@ -178,8 +178,8 @@ window.setupRedeem = function() {
         extra = 'No status code was returned.';
       }
       dialog({
-        title: 'Request failed: ' + data.passcode,
-        html: '<strong>The HTTP request failed.</strong> ' + extra
+        title: 'リクエスト失敗: ' + data.passcode,
+        html: '<strong>HTTPリクエストに失敗しました。</strong> ' + extra
       });
     });
     jqXHR.passcode = passcode;

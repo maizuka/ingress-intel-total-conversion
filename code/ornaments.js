@@ -17,7 +17,7 @@ window.ornaments.OVERLAY_OPACITY = 0.6;
 window.ornaments.setup = function() {
   window.ornaments._portals = {};
   window.ornaments._layer = L.layerGroup();
-  window.addLayerGroup('Ornaments', window.ornaments._layer, true);
+  window.addLayerGroup('オーナメント', window.ornaments._layer, true);
 };
 
 // quick test for portal having ornaments

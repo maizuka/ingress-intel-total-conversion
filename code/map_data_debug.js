@@ -7,7 +7,7 @@ window.RenderDebugTiles = function() {
   this.FADE_TIME = 2.0;
 
   this.debugTileLayer = L.layerGroup();
-  window.addLayerGroup("DEBUG Data Tiles", this.debugTileLayer, false);
+  window.addLayerGroup("デバッグ用タイル", this.debugTileLayer, false);
 
   this.debugTileToRectangle = {};
   this.debugTileClearTimes = {};

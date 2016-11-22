@@ -94,11 +94,11 @@ window.outOfDateUserPrompt = function()
     window.blockOutOfDateRequests = true;
 
     dialog({
-      title: 'Reload IITC',
-      html: '<p>IITC is using an outdated version code. This will happen when Niantic update the standard intel site.</p>' +
-            '<p>You need to reload the page to get the updated changes.</p>' +
-            '<p>If you have just reloaded the page, then an old version of the standard site script is cached somewhere.' +
-            'In this case, try clearing your cache, or waiting 15-30 minutes for the stale data to expire.</p>',
+      title: 'IITCを再読込して下さい',
+      html: '<p>IITCは期限の切れたバージョンコードを使用しています。 これはNianticが標準Intelサイトを更新した時に発生します。</p>' +
+            '<p>アップデートによる変更を取得するためページを更新する必要があります</p>' +
+            '<p>あなたが今リロードすると、古いバージョンのスクリプトはどこかにキャッシュされる場合があります。' +
+            'この場合、キャッシュを手動で削除するか、古いキャッシュが有効期限(15-30分)を過ぎるまで待ってください。</p>',
       buttons: {
         'RELOAD': function() {
           if (typeof android !== 'undefined' && android && android.reloadIITC) {

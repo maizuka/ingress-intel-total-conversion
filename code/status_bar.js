@@ -13,31 +13,31 @@ window.renderUpdateStatus = function() {
   zoom = getDataZoomForMapZoom(zoom);
   var tileParams = getMapZoomTileParameters(zoom);
 
-  var t = '<span class="help portallevel" title="Indicates portal levels/link lengths displayed.  Zoom in to display more.">';
+  var t = '<span class="help portallevel" title="ポータルレベル及びリンク距離を表示しています。 ズームして更に表示します。">';
 
   if (tileParams.hasPortals) {
     // zoom level includes portals (and also all links/fields)
     if(!window.isSmartphone()) // space is valuable
-      t += '<b>portals</b>: ';
+      t += '<b>ポータル</b>: ';
     if(tileParams.level === 0)
-      t += '<span id="loadlevel">all</span>';
+      t += '<span id="loadlevel">全て</span>';
     else
       t += '<span id="loadlevel" style="background:'+COLORS_LVL[tileParams.level]+'">L'+tileParams.level+(tileParams.level<8?'+':'') + '</span>';
   } else {
     if(!window.isSmartphone()) // space is valuable
-      t += '<b>links</b>: ';
+      t += '<b>リンク</b>: ';
 
     if (tileParams.minLinkLength > 0)
       t += '<span id="loadlevel">&gt;'+(tileParams.minLinkLength>1000?tileParams.minLinkLength/1000+'km':tileParams.minLinkLength+'m')+'</span>';
     else
-      t += '<span id="loadlevel">all links</span>';
+      t += '<span id="loadlevel">全てのリンク</span>';
   }
 
   t +='</span>';
 
 
   // map status display
-  t += ' <span class="map"><b>map</b>: ';
+  t += ' <span class="map"><b>マップ</b>: ';
 
   if (window.mapDataRequest) {
     var status = window.mapDataRequest.getStatus();
@@ -64,9 +64,9 @@ window.renderUpdateStatus = function() {
 
   //request status
   if (window.activeRequests.length > 0)
-    t += ' ' + window.activeRequests.length + ' requests';
+    t += ' ' + window.activeRequests.length + ' 個のリクエスト';
   if (window.failedRequestCount > 0)
-    t += ' <span style="color:#f66">' + window.failedRequestCount + ' failed</span>';
+    t += ' <span style="color:#f66">' + window.failedRequestCount + ' 個失敗</span>';
 
 
   //it's possible that updating the status bar excessively causes some performance issues. so rather than doing it

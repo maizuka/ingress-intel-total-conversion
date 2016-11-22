@@ -45,7 +45,7 @@ window.search.Query.prototype.init = function() {
       ((this.term.length > 16 ?
         this.term.substr(0,8) + '…' + this.term.substr(this.term.length-8,8) :
         this.term) +
-        ' (Return to load more)'))
+        ' (確定して更に表示)'))
     .appendTo(this.container);
 
   this.list = $('<ul>')
@@ -273,7 +273,7 @@ addHook('search', function(query) {
   $.getJSON(NOMINATIM + encodeURIComponent(query.term), function(data) {
     if(data.length === 0) {
       query.addResult({
-        title: 'No results on OpenStreetMap',
+        title: 'OpenStreetMapで見つかりませんでした',
         icon: '//www.openstreetmap.org/favicon.ico',
         onSelected: function() {return true;},
       });

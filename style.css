@@ -676,7 +676,7 @@ h3 {
 
 #randdetails th, #resodetails th {
   font-weight: normal;
-  text-align: right;
+  text-align: center;
   width: 62px;
   padding:0px;
   padding-right:4px;
@@ -684,7 +684,7 @@ h3 {
 }
 
 #randdetails th + th, #resodetails th + th {
-  text-align: left;
+  text-align: center;
   padding-right: 4px;
   padding-left: 4px;
 }

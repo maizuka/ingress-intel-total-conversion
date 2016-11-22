@@ -6,13 +6,13 @@
 window.getRangeText = function(d) {
   var range = getPortalRange(d);
 
-  var title = 'Base range:\t' + digits(Math.floor(range.base))+'m' +
-    '\nLink amp boost:\t×'+range.boost +
-    '\nRange:\t'+digits(Math.floor(range.range))+'m';
+  var title = '基本距離:\t' + digits(Math.floor(range.base))+' m' +
+      '\nリンクアンプ:\t×'+range.boost +
+      '\n距離:\t'+digits(Math.floor(range.range))+' m';
 
-  if(!range.isLinkable) title += '\nPortal is missing resonators,\nno new links can be made';
+  if(!range.isLinkable) title += '\nレゾネーター欠損,\n新しいリンク作成不可';
 
-  return ['range',
+  return ['距離',
       '<a onclick="window.rangeLinkClick()"' +
     (range.isLinkable ? '' : ' style="text-decoration:line-through;"') +
     '>' +
@@ -41,33 +41,74 @@ window.getModDetails = function(d) {
       modName = mod.name || '(unknown mod)';
 
       if (mod.rarity) {
-        modName = mod.rarity.capitalize().replace(/_/g,' ') + ' ' + modName;
+        modName = mod.rarity.capitalize().replace(/_/g,' ') + '<br>' + modName;
       }
+
+      modName = modName
+        .replace(/Portal Shield/, 'ポータル<br>シールド')
+        .replace(/AXA Shield/, 'AXA<br>シールド')
+        .replace(/Turret/, 'ターレット')
+        .replace(/Force Amp/, 'フォース<br>アンプ')
+        .replace(/Link Amp/, 'リンク<br>アンプ')
+        .replace(/Link Amp/, 'リンク<br>アンプ')
+        .replace(/Multi-hack/, 'マルチ<br>ハック')
+        .replace(/Heat Sink/, 'ヒート<br>シンク');
 
       modTooltip = modName + '\n';
       if (mod.owner) {
-        modTooltip += 'Installed by: '+ mod.owner + '\n';
+        modTooltip += '設置: ' + mod.owner + '\n';
       }
 
       if (mod.stats) {
-        modTooltip += 'Stats:';
+        modTooltip += '効果:';
         for (var key in mod.stats) {
           if (!mod.stats.hasOwnProperty(key)) continue;
           var val = mod.stats[key];
+          var keyname = '';
 
           // if (key === 'REMOVAL_STICKINESS' && val == 0) continue;  // stat on all mods recently - unknown meaning, not displayed in stock client
 
           // special formatting for known mod stats, where the display of the raw value is less useful
-          if      (key === 'HACK_SPEED')            val = (val/10000)+'%'; // 500000 = 50%
-          else if (key === 'HIT_BONUS')             val = (val/10000)+'%'; // 300000 = 30%
-          else if (key === 'ATTACK_FREQUENCY')      val = (val/1000) +'x'; // 2000 = 2x
-          else if (key === 'FORCE_AMPLIFIER')       val = (val/1000) +'x'; // 2000 = 2x
-          else if (key === 'LINK_RANGE_MULTIPLIER') val = (val/1000) +'x'; // 2000 = 2x
-          else if (key === 'LINK_DEFENSE_BOOST')    val = (val/1000) +'x'; // 1500 = 1.5x
-          else if (key === 'REMOVAL_STICKINESS' && val > 100) val = (val/10000)+'%'; // an educated guess
+          switch (key) {
+            case 'HACK_SPEED': // 500000 = 50%
+              val = (val/10000)+'%';
+              keyname = 'ハックスピード';
+              break;
+            case 'HIT_BONUS': // 300000 = 30%
+              val = (val/10000)+'%';
+              keyname = 'クリティカルヒット';
+              break;
+            case 'ATTACK_FREQUENCY': // 2000 = 2x
+              val = (val/1000) +'x';
+              keyname = '攻撃頻度';
+              break;
+            case 'FORCE_AMPLIFIER': // 2000 = 2x
+              val = (val/1000) +'x';
+              keyname = '攻撃力';
+              break;
+            case 'LINK_RANGE_MULTIPLIER': // 2000 = 2x
+              val = (val/1000) +'x';
+              keyname = 'リンク距離';
+              break;
+            case 'LINK_DEFENSE_BOOST': // 1500 = 1.5x
+              val = (val/1000) +'x';
+              keyname = 'リンク防御力';
+              break;
+            case 'REMOVAL_STICKINESS': // an educated guess
+              if (val > 100)
+                val = (val/10000)+'%';
+              keyname = '剥がれにくさ';
+              break;
+            case 'MITIGATION':
+              val = val + '%';
+              keyname = 'ダメージ緩和';
+              break;
+          }
           // else display unmodified. correct for shield mitigation and multihack - unknown for future/other mods
 
-          modTooltip += '\n+' +  val + ' ' + key.capitalize().replace(/_/g,' ');
+          if (keyname === '')
+            keyname = key.capitalize().replace(/_/g,' ');
+          modTooltip += '\n+' +  val + ' ' + keyname;
         }
       }
 
@@ -101,7 +142,7 @@ window.getEnergyText = function(d) {
   var totalNrg = getTotalPortalEnergy(d);
   var title = currentNrg + ' / ' + totalNrg;
   var fill = prettyEnergy(currentNrg) + ' / ' + prettyEnergy(totalNrg);
-  return ['energy', fill, title];
+  return ['XM', fill, title];
 };
 
 
@@ -161,11 +202,11 @@ window.renderResonatorDetails = function(slot, level, nrg, nick) {
   var max = RESO_NRG[level];
   var fillGrade = level > 0 ? nrg/max*100 : 0;
 
-  var inf = (level > 0 ? 'energy:\t' + nrg   + ' / ' + max + ' (' + Math.round(fillGrade) + '%)\n' +
-                       'level:\t'  + level + '\n' +
-                       'owner:\t'  + nick  + '\n' :
+  var inf = (level > 0 ? 'XM:\t' + nrg   + ' / ' + max + ' (' + Math.round(fillGrade) + '%)\n' +
+                       'レベル:\t'  + level + '\n' +
+                       'オーナー:\t'  + nick  + '\n' :
                        '') +
-            (slot !== null ? 'octant:\t' + OCTANTS[slot] + ' ' + OCTANTS_ARROW[slot]:'');
+            (slot !== null ? '方角:\t' + OCTANTS[slot] + ' ' + OCTANTS_ARROW[slot]:'');
 
   var style = fillGrade ? 'width:'+fillGrade+'%; background:'+COLORS_LVL[level]+';':'';
 
@@ -189,16 +230,16 @@ window.getAttackApGainText = function(d,fieldCount,linkCount) {
   var t = '';
   if (teamStringToId(PLAYER.team) == teamStringToId(d.team)) {
     totalGain = breakdown.friendlyAp;
-    t += 'Friendly AP:\t' + breakdown.friendlyAp + '\n';
-    t += '  Deploy ' + breakdown.deployCount + ', ';
-    t += 'Upgrade ' + breakdown.upgradeCount + '\n';
+    t += '友好AP:\t' + breakdown.friendlyAp + '\n';
+    t += '- デプロイ ' + breakdown.deployCount + '個, ';
+    t += '更新 ' + breakdown.upgradeCount + '個\n';
     t += '\n';
   }
-  t += 'Enemy AP:\t' + breakdown.enemyAp + '\n';
-  t += '  Destroy AP:\t' + breakdown.destroyAp + '\n';
-  t += '  Capture AP:\t' + breakdown.captureAp + '\n';
+  t += '敵対AP:\t' + breakdown.enemyAp + '\n';
+  t += '- 破壊:\t' + breakdown.destroyAp + '\n';
+  t += '- キャプチャー:\t' + breakdown.captureAp + '\n';
 
-  return ['AP Gain', digits(totalGain), t];
+  return ['獲得AP', digits(totalGain), t];
 };
 
 
@@ -207,12 +248,12 @@ window.getHackDetailsText = function(d) {
 
   var shortHackInfo = hackDetails.hacks+' @ '+formatInterval(hackDetails.cooldown);
 
-  var title = 'Hacks available every 4 hours\n' +
-              'Hack count:\t'+hackDetails.hacks+'\n' +
-              'Cooldown time:\t'+formatInterval(hackDetails.cooldown)+'\n' +
-              'Burnout time:\t'+formatInterval(hackDetails.burnout);
+  var title = 'ハック可能数:\t'+hackDetails.hacks+'\n' +
+              'クールダウン間隔:\t'+formatInterval(hackDetails.cooldown)+'\n' +
+              '最短バーンアウト:\t'+formatInterval(hackDetails.burnout) + '\n' +
+              'バーンアウト:\t4時間';
 
-  return ['hacks', shortHackInfo, title];
+  return ['ハック', shortHackInfo, title];
 };
 
 
@@ -222,12 +263,12 @@ window.getMitigationText = function(d,linkCount) {
   var mitigationShort = mitigationDetails.total;
   if (mitigationDetails.excess) mitigationShort += ' (+'+mitigationDetails.excess+')';
 
-  var title = 'Total shielding:\t'+(mitigationDetails.shields+mitigationDetails.links)+'\n' +
-              '- active:\t'+mitigationDetails.total+'\n' +
-              '- excess:\t'+mitigationDetails.excess+'\n' +
-              'From\n' +
-              '- shields:\t'+mitigationDetails.shields+'\n' +
-              '- links:\t'+mitigationDetails.links;
+  var title = 'シールド合計:\t'+(mitigationDetails.shields+mitigationDetails.links)+'\n' +
+              '- 有効:\t'+mitigationDetails.total+'\n' +
+              '- 超過:\t'+mitigationDetails.excess+'\n' +
+              '内訳\n' +
+              '- シールド:\t'+mitigationDetails.shields+'\n' +
+              '- リンク:\t'+mitigationDetails.links;
 
-  return ['shielding', mitigationShort, title];
+  return ['シールド', mitigationShort, title];
 };

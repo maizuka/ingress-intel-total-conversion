@@ -20,7 +20,7 @@
 
 // REPLACE ORIG SITE ///////////////////////////////////////////////////
 if(document.getElementsByTagName('html')[0].getAttribute('itemscope') !== null)
-  throw('Ingress Intel Website is down, not a userscript issue.');
+  throw('標準Intelのウェブサイトがダウンしています。これはプラグインの問題ではありません。');
 window.iitcBuildDate = '@@BUILDDATE@@';
 
 // disable vanilla JS
@@ -46,10 +46,10 @@ if(!d) {
     // however, this is no longer common. more common is users getting account suspended/banned - and this
     // currently shows the 'not enabled' message. so it's safer to not repeatedly reload in this case
 //    setTimeout('location.reload();', 3*1000);
-    throw("Page doesn't have player data, but you are logged in.");
+    throw("ログインは完了していますが、プレイヤーデータを読み込めませんでした。");
   }
   // FIXME: handle nia takedown in progress
-  throw("Couldn't retrieve player data. Are you logged in?");
+  throw("プレイヤーデータが見つかりません。");
 }
 
 
@@ -90,21 +90,21 @@ document.getElementsByTagName('body')[0].innerHTML = '' +
     '  <td><mark>tell faction:</mark></td>' +
     '  <td><input id="chattext" type="text" maxlength="256" accesskey="c" title="[c]" /></td>' +
     '</tr></table></form>' +
-    '<a id="sidebartoggle" accesskey="i" title="Toggle sidebar [i]"><span class="toggle close"></span></a>' +
+    '<a id="sidebartoggle" accesskey="i" title="サイドバー切替 [i]"><span class="toggle close"></span></a>' +
     '<div id="scrollwrapper">' + // enable scrolling for small screens
     '  <div id="sidebar" style="display: none">' +
     '    <div id="playerstat">t</div>' +
     '    <div id="gamestat">&nbsp;loading global control stats</div>' +
     '    <div id="searchwrapper">' +
-    '      <img src="@@INCLUDEIMAGE:images/current-location.png@@"/ title="Current Location" id="buttongeolocation">' +
-    '      <input id="search" placeholder="Search location…" type="search" accesskey="f" title="Search for a place [f]"/>' +
+    '      <img src="@@INCLUDEIMAGE:images/current-location.png@@"/ title="現在地" id="buttongeolocation">' +
+    '      <input id="search" placeholder="検索" type="search" accesskey="f" title="場所やポータルを検索します [f]" />' +
     '    </div>' +
     '    <div id="portaldetails"></div>' +
-    '    <input id="redeem" placeholder="Redeem code…" type="text"/>' +
+    '    <input id="redeem" placeholder="パスコード" type="text" title="パスコードを入力しアイテムを取得します" />' +
     '    <div id="toolbox">' +
-    '      <a onmouseover="setPermaLink(this)" onclick="setPermaLink(this);return androidPermalink()" title="URL link to this map view">Permalink</a>' +
-    '      <a onclick="window.aboutIITC()" style="cursor: help">About IITC</a>' +
-    '      <a onclick="window.regionScoreboard()" title="View regional scoreboard">Region scores</a>' +
+    '      <a onmouseover="setPermaLink(this)" onclick="setPermaLink(this);return androidPermalink()" title="このマップへのリンク">パーマリンク</a>' +
+    '      <a onclick="window.aboutIITC()" style="cursor: help">IITCについて</a>' +
+    '      <a onclick="window.regionScoreboard()" title="地域のスコアボードを表示します">地域スコア</a>' +
     '    </div>' +
     '  </div>' +
     '</div>' +

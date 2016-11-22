@@ -21,12 +21,12 @@ window.updateGameScore = function(data) {
     var rs = '<span class="res" style="width:'+rp+'%;">'+Math.round(rp)+'%&nbsp;</span>';
     var es = '<span class="enl" style="width:'+ep+'%;">&nbsp;'+Math.round(ep)+'%</span>';
     $('#gamestat').html(rs+es).one('click', function() { window.updateGameScore(); });
-    // help cursor via “#gamestat span”
-    $('#gamestat').attr('title', 'Resistance:\t'+r+' MindUnits\nEnlightened:\t'+e+' MindUnits');
+    // help cursor via "#gamestat span”
+    $('#gamestat').attr('title', 'レジスタンス:\t'+r+' MindUnits\nエンライテンド:\t'+e+' MindUnits');
   } else if (data && data.error) {
-    console.warn('game score failed to load: '+data.error);
+    console.warn('ゲームスコアの読み込みに失敗: '+data.error);
   } else {
-    console.warn('game score failed to load - unknown reason');
+    console.warn('ゲームスコアの読み込みに失敗 - 不明なエラー');
   }
 
   // TODO: idle handling - don't refresh when IITC is idle!
