@@ -54,7 +54,7 @@ window.plugin.portalslist.filter = 0;
 
 window.plugin.portalslist.fields = [
   {
-    title: "Portal Name",
+    title: "ポータル名",
     value: function(portal) { return portal.options.data.title; },
     sortValue: function(value, portal) { return value.toLowerCase(); },
     format: function(cell, portal, value) {
@@ -64,7 +64,7 @@ window.plugin.portalslist.fields = [
     }
   },
   {
-    title: "Level",
+    title: "レベル",
     value: function(portal) { return portal.options.data.level; },
     format: function(cell, portal, value) {
       $(cell)
@@ -74,14 +74,14 @@ window.plugin.portalslist.fields = [
     defaultOrder: -1,
   },
   {
-    title: "Team",
+    title: "陣営",
     value: function(portal) { return portal.options.team; },
     format: function(cell, portal, value) {
       $(cell).text(['NEU', 'RES', 'ENL'][value]);
     }
   },
   {
-    title: "Health",
+    title: "XM",
     value: function(portal) { return portal.options.data.health; },
     sortValue: function(value, portal) { return portal.options.team===TEAM_NONE ? -1 : value; },
     format: function(cell, portal, value) {
@@ -92,7 +92,7 @@ window.plugin.portalslist.fields = [
     defaultOrder: -1,
   },
   {
-    title: "Res",
+    title: "レゾ",
     value: function(portal) { return portal.options.data.resCount; },
     format: function(cell, portal, value) {
       $(cell)
@@ -102,7 +102,7 @@ window.plugin.portalslist.fields = [
     defaultOrder: -1,
   },
   {
-    title: "Links",
+    title: "リンク",
     value: function(portal) { return window.getPortalLinks(portal.options.guid); },
     sortValue: function(value, portal) { return value.in.length + value.out.length; },
     format: function(cell, portal, value) {
@@ -115,7 +115,7 @@ window.plugin.portalslist.fields = [
     defaultOrder: -1,
   },
   {
-    title: "Fields",
+    title: "CF",
     value: function(portal) { return getPortalFieldsCount(portal.options.guid); },
     format: function(cell, portal, value) {
       $(cell)
@@ -135,13 +135,13 @@ window.plugin.portalslist.fields = [
     format: function(cell, portal, value) {
       var title = '';
       if (teamStringToId(PLAYER.team) == portal.options.team) {
-        title += 'Friendly AP:\t'+value.friendlyAp+'\n' +
-                 '- deploy '+(8-portal.options.data.resCount)+' resonator(s)\n' +
-                 '- upgrades/mods unknown\n';
+        title += '友好AP:\t'+value.friendlyAp+'\n' +
+                 '- デプロイ:\t'+(8-portal.options.data.resCount)+'個\n' +
+                 '- 更新/MODは不明\n';
       }
-      title += 'Enemy AP:\t'+value.enemyAp+'\n' +
-               '- Destroy AP:\t'+value.destroyAp+'\n' +
-               '- Capture AP:\t'+value.captureAp;
+      title += '敵対AP:\t'+value.enemyAp+'\n' +
+               '- 破壊:\t'+value.destroyAp+'\n' +
+               '- キャプチャー:\t'+value.captureAp;
 
       $(cell)
         .addClass("alignR")
@@ -212,7 +212,7 @@ window.plugin.portalslist.getPortals = function() {
 window.plugin.portalslist.displayPL = function() {
   var list;
   // plugins (e.g. bookmarks) can insert fields before the standard ones - so we need to search for the 'level' column
-  window.plugin.portalslist.sortBy = window.plugin.portalslist.fields.map(function(f){return f.title;}).indexOf('Level');
+  window.plugin.portalslist.sortBy = window.plugin.portalslist.fields.map(function(f){return f.title;}).indexOf('レベル');
   window.plugin.portalslist.sortOrder = -1;
   window.plugin.portalslist.enlP = 0;
   window.plugin.portalslist.resP = 0;
@@ -231,7 +231,7 @@ window.plugin.portalslist.displayPL = function() {
     dialog({
       html: $('<div id="portalslist">').append(list),
       dialogClass: 'ui-dialog-portalslist',
-      title: 'Portal list: ' + window.plugin.portalslist.listPortals.length + ' ' + (window.plugin.portalslist.listPortals.length == 1 ? 'portal' : 'portals'),
+      title: 'ポータル一覧: ' + window.plugin.portalslist.listPortals.length + ' ' + (window.plugin.portalslist.listPortals.length == 1 ? 'portal' : 'portals'),
       id: 'portal-list',
       width: 700
     });
@@ -288,7 +288,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter) {
     cell = row.appendChild(document.createElement('th'));
     cell.className = 'filter' + label.substr(0, 3);
     cell.textContent = label+':';
-    cell.title = 'Show only portals of this color';
+    cell.title = 'この色のポータルのみを表示';
     $(cell).click(function() {
       $('#portalslist').empty().append(window.plugin.portalslist.portalTable(sortBy, sortOrder, i));
     });
@@ -296,7 +296,7 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter) {
 
     cell = row.insertCell(-1);
     cell.className = 'filter' + label.substr(0, 3);
-    if(i !== 0) cell.title = 'Hide portals of this color';
+    if(i !== 0) cell.title = 'この色のポータルを隠す';
     $(cell).click(function() {
       $('#portalslist').empty().append(window.plugin.portalslist.portalTable(sortBy, sortOrder, -i));
     });
@@ -357,8 +357,8 @@ window.plugin.portalslist.portalTable = function(sortBy, sortOrder, filter) {
     table.appendChild(row);
   });
 
-  container.append('<div class="disclaimer">Click on portals table headers to sort by that column. ' +
-    'Click on <b>All, Neutral, Resistance, Enlightened</b> to only show portals owner by that faction or on the number behind the factions to show all but those portals.</div>');
+  container.append('<div class="disclaimer">列名をクリックすると並び替えます。' +
+    '<b>All, Neutral, Resistance, Enlightened</b>をクリックするとその陣営のみ、数字をクリックするとそれ以外を表示します。</div>');
 
   return container;
 };
@@ -396,10 +396,10 @@ window.plugin.portalslist.onPaneChanged = function(pane) {
 
 var setup =  function() {
   if(window.useAndroidPanes()) {
-    android.addPane("plugin-portalslist", "Portals list", "ic_action_paste");
+    android.addPane("plugin-portalslist", "ポータル一覧", "ic_action_paste");
     addHook("paneChanged", window.plugin.portalslist.onPaneChanged);
   } else {
-    $('#toolbox').append('<a onclick="window.plugin.portalslist.displayPL()" title="Display a list of portals in the current view [t]" accesskey="t">Portals list</a>');
+    $('#toolbox').append('<a onclick="window.plugin.portalslist.displayPL()" title="現在の範囲にあるポータルの一覧を表示します [t]" accesskey="t">ポータル一覧</a>');
   }
 
   $("<style>")
